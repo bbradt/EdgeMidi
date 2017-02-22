@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Feb 21 20:54:23 2017
+#-----------------------------------------------------------------------------
+# Name:        EdgeMidi.py
+# Purpose:     Generation of Midi Tracks using Edge-Detection
+#
+# Author:      Bradley Baker # BBradT at {gmail} dot com
+#
+# Created:     2017/02/22  (February 22 2017)
+# Copyright:   (c) 2017 Bradley Baker
+# License:     Please see License.txt for the terms under which this
+#              software is distributed.
+#-----------------------------------------------------------------------------
 
-@author: bbaker94
-
-
-"""
 #Using the MidiUtil library
-from MidiFile import MIDIFile
+from MidiUtil import MIDIFile
 from PIL import Image
 import numpy as np
 import ConfigParser
@@ -158,7 +163,7 @@ def main(argv):
 
 	''' 
 	if (save_any and save_midi):
-		binfile = open(outdir + "/output.mid", 'wb')
+		binfile = open(outdir + "/" + outfile +".mid", 'wb')
 		Midi.writeFile(binfile)
 		binfile.close()
 
