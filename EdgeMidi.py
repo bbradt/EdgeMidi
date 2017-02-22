@@ -17,7 +17,7 @@ from PIL import Image
 import PIL.ImageOps
 import numpy as np
 import ConfigParser
-import cv2
+#import cv2
 #import ffmpy
 import sys, getopt, os
 
@@ -43,7 +43,7 @@ def main(argv):
 		
 	for opt, arg in opts:
 		if opt == '-h':
-			print 'EdgeMidi.py -i <InputImage> -o <OutputFileName>'
+			print 'EdgeMidi.py -i <InputImage> [-o <OutputFilePrefix> -x <XResolution> -y <YResolution> -s <SaveFiles>]'
 		elif opt in ("-i","--ifile"):
 			inputfile = arg
 		elif opt in ("-o","--ofile"):
