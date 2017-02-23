@@ -17,6 +17,7 @@ from PIL import Image
 import PIL.ImageOps
 import numpy as np
 import ConfigParser
+import scipy.io as sio
 #import cv2
 #import ffmpy
 import sys, getopt, os
@@ -35,8 +36,9 @@ def main(argv):
 	global save_any
 	global save_grid
 	global save_thumb
+	global input_key
 	try:
-		opts, args = getopt.getopt(argv,"hi:o:x:y:t:s:",["od","xr","yr","oct","octr","sg","st","sm","ifile=","ofile=","xres=","yres=","octaves=","octrange=","time=","savegrid=","savethumb=","savemidi=","save=","odir="])
+		opts, args = getopt.getopt(argv,"hi:o:x:y:t:s:k:",["od=","xr=","yr=","oct=","octr=","sg=","st","sm","ifile=","ofile=","xres=","yres=","octaves=","octrange=","time=","savegrid=","savethumb=","savemidi=","save=","odir="])
 	except getopt.GetoptError:
 		print 'EdgeMidi.py -i <InputImage> -o <OutputFileName>'
 		sys.exit(2)
@@ -67,7 +69,9 @@ def main(argv):
 		elif opt in("-sm","--savemidi"):
 			save_midi = int(arg)
 		elif opt in("-s","--save"):
-			save_any = int(arg)			
+			save_any = int(arg)	
+		elif opt in("-k"):
+			input_key = arg
 
 	#Attempt to make save directory
 	if not os.path.exists(outdir):
@@ -123,7 +127,7 @@ def main(argv):
 	# Midi Filling Loop
 	pitch_grid = grid
 	track = 0
-	tempo = 120
+	tempo = 60
 	volume = 100
 	for i in range(0,grid_res_y):
 		for j in range(0,grid_res_x):
@@ -133,7 +137,7 @@ def main(argv):
 				Midi.addTempo(track,time,tempo)
 				channel = 0 #trying now with just one channel
 				pitch = i #midi notes only go up to 127, but we go to 144
-				pitch = toKey("CM",pitch)
+				pitch = toKey(input_key,pitch)
 				pitch_grid[i][j] = pitch
 				raw_pitch_grid[i][j] = i#-grid_res_y
 				absolute_pitch_grid[i][j] = i%144
@@ -146,6 +150,7 @@ def main(argv):
 		abs_pitch_grid_file = Image.fromarray(np.asarray(absolute_pitch_grid)*255)
 		raw_pitch_grid_file = Image.fromarray(np.asarray(raw_pitch_grid)*255)
 		if (save_grid):
+			np.save(outdir + '/pitch.grid',pitch_grid)
 			grid_file.save(outdir + "/grid_output.png")
 			pitch_grid_file.save(outdir + "/pitch_grid_output.png")
 			abs_pitch_grid_file.save(outdir + "/abs_pitch_grid_output.png")
@@ -170,7 +175,7 @@ def main(argv):
 		binfile = open(outdir + "/" + outfile +".mid", 'wb')
 		Midi.writeFile(binfile)
 		binfile.close()
-
+	
 	#ffmpy export for video 
 	#ff = ffmpy.FFmpeg( inputs = {'demo.avi':None, 'output.wav': None}, outputs={'final.avi':'-y -c:v h264 -c:a ac3'})
 	#ff.run()
@@ -209,6 +214,7 @@ if __name__ == '__main__':
 	global save_any
 	global save_grid
 	global save_thumb
+	global input_key
 	config = ConfigParser.ConfigParser()
 	config.readfp(open("EdgeMidi.cfg"))
 
@@ -226,5 +232,5 @@ if __name__ == '__main__':
 	save_any = config.getint("io","default_save")
 	save_grid = config.getint("io","default_save_grid")
 	save_thumb = config.getint("io","default_save_thumb")
-
+	input_key = config.get("midi","default_key")
 	main(sys.argv[1:])	
