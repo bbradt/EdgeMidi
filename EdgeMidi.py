@@ -95,7 +95,7 @@ def main(argv):
 
 	# Guiding Global Statistics
 	total_mean = np.mean(pixels)
-	total_std = np.std(pixels)
+	#total_std = np.std(pixels)
 	#sub_mean = np.mean(thumb_pixels)
 	def test_edge(arg1,arg2):
 		return arg1 < arg2
@@ -125,30 +125,36 @@ def main(argv):
 				#rgb_grid[i*grid_res_y+j] = (255,255,255)
 
 	# Midi Filling Loop
-	pitch_grid = grid
-	track = 0
+	
 	tempo = 60
 	volume = 100
+	track = 0
 	for i in range(0,grid_res_y):
+		
 		for j in range(0,grid_res_x):
+			volume = 100
+			#if (grid[i][j] == 255):
+			time = j
+			Midi.addTrackName(track,time,"Track *{}*:".format(i))
+			Midi.addTempo(track,time,tempo)
+			channel = 0 #trying now with just one channel
 			if (grid[i][j] == 255):
-				time = j
-				Midi.addTrackName(track,time,"Time Track :*{} and {}*:".format(i,j))
-				Midi.addTempo(track,time,tempo)
-				channel = 0 #trying now with just one channel
 				pitch = i #midi notes only go up to 127, but we go to 144
 				pitch = toKey(input_key,pitch)
-				pitch_grid[i][j] = pitch
-				raw_pitch_grid[i][j] = i#-grid_res_y
-				absolute_pitch_grid[i][j] = i%144
-				Midi.addNote(track,channel,pitch,time,each_midi_duration,volume)
+			else:
+				pitch = 0
+				volume = 0
+			pitch_grid[i][j] = pitch
+			raw_pitch_grid[i][j] = i#-grid_res_y
+			absolute_pitch_grid[i][j] = i%144
+			Midi.addNote(track,channel,pitch,time,each_midi_duration,volume)
 
 	#Video Creation -- Currently not synced with Audio
 	if (save_any):
-		grid_file = Image.fromarray(np.asarray(grid)*255)
-		pitch_grid_file = Image.fromarray(np.asarray(pitch_grid)*255)
-		abs_pitch_grid_file = Image.fromarray(np.asarray(absolute_pitch_grid)*255)
-		raw_pitch_grid_file = Image.fromarray(np.asarray(raw_pitch_grid)*255)
+		grid_file = Image.fromarray(np.asarray(grid).astype('uint8')*1)
+		pitch_grid_file = Image.fromarray(np.asarray(pitch_grid).astype('uint8')*1)
+		abs_pitch_grid_file = Image.fromarray(np.asarray(absolute_pitch_grid).astype('uint8')*1)
+		raw_pitch_grid_file = Image.fromarray(np.asarray(raw_pitch_grid).astype('uint8')*1)
 		if (save_grid):
 			np.save(outdir + '/pitch.grid',pitch_grid)
 			grid_file.save(outdir + "/grid_output.png")
@@ -232,5 +238,5 @@ if __name__ == '__main__':
 	save_any = config.getint("io","default_save")
 	save_grid = config.getint("io","default_save_grid")
 	save_thumb = config.getint("io","default_save_thumb")
-	input_key = config.get("midi","default_key")
+	input_key = config.get("analysis","default_key")
 	main(sys.argv[1:])	
