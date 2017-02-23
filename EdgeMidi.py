@@ -13,12 +13,10 @@
 
 #Using the MidiUtil library
 from MidiUtil import MIDIFile
-from PIL import Image
-import PIL.ImageOps
 import numpy as np
 import ConfigParser
 import scipy.io as sio
-#import cv2
+import cv2
 #import ffmpy
 import sys, getopt, os
 
@@ -76,115 +74,70 @@ def main(argv):
 	#Attempt to make save directory
 	if not os.path.exists(outdir):
 		os.makedirs(outdir)
-	
-	#Image loading
-	image = Image.open(inputfile)
-	pixels = list(image.getdata())
 
-	grid = [[0 for y in range(grid_res_x)] for x in range(grid_res_y)]
-	pitch_grid = [[0 for x in range(grid_res_x)] for y in range(grid_res_y)]
-	absolute_pitch_grid = [[0 for x in range(grid_res_x)] for y in range(grid_res_y)]
-	raw_pitch_grid = [[0 for x in range(grid_res_x)] for y in range(grid_res_y)]
-	#rgb_grid = [(0,0,0) for x in range(grid_res_x*grid_res_y)]
-	#range_grid_x = image.size[0]/grid_res_x # the x grid lengths
-	#range_grid_y = image.size[1]/grid_res_y # the y grid lengths
+	print("Initializing")		
+	#Image loading
+	image = cv2.imread(inputfile,0)
+	
+	grid = np.zeros((grid_res_y,grid_res_x))
+	pitch_grid = np.zeros((grid_res_y,grid_res_x))
 
 	# Current analysis method resizes image using PIL
-	thumbnail = image.rotate(0).resize([grid_res_x,grid_res_y], Image.ANTIALIAS)
-	thumb_pixels = list(thumbnail.getdata())
-
+	thumbnail = cv2.resize(image,(grid_res_x,grid_res_y),interpolation= cv2.INTER_CUBIC)#image.rotate(0).resize([grid_res_x,grid_res_y], Image.ANTIALIAS)
+	edges = cv2.Canny(thumbnail,200,300)
+	thumbnail = edges
+	cv2.imwrite(outdir + "/edge_output.png",edges)
 	# Guiding Global Statistics
-	total_mean = np.mean(pixels)
-	#total_std = np.std(pixels)
-	#sub_mean = np.mean(thumb_pixels)
+	total_mean = np.mean(image)
 	def test_edge(arg1,arg2):
 		return arg1 < arg2
-	if (np.sum(thumb_pixels < total_mean) > len(thumb_pixels)/2):
+	if (np.sum(test_edge(image,total_mean)) > thumbnail.size/2):
 		def test_edge(arg1,arg2):
-			return arg1 > arg2
-	print(np.sum(thumb_pixels < total_mean))
+			return (arg1 > arg2)
 	
 	# Midi Information
 	Midi = MIDIFile(1) #type 1 midi - mono track, type 2 is stereo
 	each_midi_duration = track_time / grid_res_x # the duration that each midi will be 
 
-
-	# Grid-Filling Loop
-
-	for i in range(0,grid_res_y):
-		for j in range(0,grid_res_x):
-		   # min_grid_x = i*range_grid_x
-		   # max_grid_x = min_grid_x + range_grid_x
-		   # min_grid_y = i*range_grid_y
-		   # max_grid_y = min_grid_y + range_grid_y
-			subimage = thumb_pixels[i*grid_res_x+j] #current method for sampling is just to resize the image
-			subimage_mean = np.mean(subimage)
-			#print(subimage_mean)e)
-			if test_edge(subimage_mean,total_mean):
-				grid[i][j] = 255
-				#rgb_grid[i*grid_res_y+j] = (255,255,255)
-
-	# Midi Filling Loop
-	
-	tempo = 60
+	# Main Loop
+	tempo = 120
 	volume = 100
 	track = 0
+	print("Creating Midi File")
 	for i in range(0,grid_res_y):
-		
 		for j in range(0,grid_res_x):
+			updateLoadBar(i*grid_res_x+j,grid_res_y*grid_res_x)
+			subimage_mean = np.mean(thumbnail[i][j])
 			volume = 100
-			#if (grid[i][j] == 255):
 			time = j
 			Midi.addTrackName(track,time,"Track *{}*:".format(i))
 			Midi.addTempo(track,time,tempo)
 			channel = 0 #trying now with just one channel
-			if (grid[i][j] == 255):
-				pitch = i #midi notes only go up to 127, but we go to 144
+			if test_edge(subimage_mean,total_mean):
+				grid[i][j] = 255
+				pitch = i 
 				pitch = toKey(input_key,pitch)
-			else:
+			else: 
 				pitch = 0
 				volume = 0
 			pitch_grid[i][j] = pitch
-			raw_pitch_grid[i][j] = i#-grid_res_y
-			absolute_pitch_grid[i][j] = i%144
-			Midi.addNote(track,channel,pitch,time,each_midi_duration,volume)
-
-	#Video Creation -- Currently not synced with Audio
+			Midi.addNote(track,channel,pitch,time,each_midi_duration,volume)	
+	
 	if (save_any):
-		grid_file = Image.fromarray(np.asarray(grid).astype('uint8')*1)
-		pitch_grid_file = Image.fromarray(np.asarray(pitch_grid).astype('uint8')*1)
-		abs_pitch_grid_file = Image.fromarray(np.asarray(absolute_pitch_grid).astype('uint8')*1)
-		raw_pitch_grid_file = Image.fromarray(np.asarray(raw_pitch_grid).astype('uint8')*1)
 		if (save_grid):
+			print("Saving debug images")
 			np.save(outdir + '/pitch.grid',pitch_grid)
-			grid_file.save(outdir + "/grid_output.png")
-			pitch_grid_file.save(outdir + "/pitch_grid_output.png")
-			abs_pitch_grid_file.save(outdir + "/abs_pitch_grid_output.png")
-			raw_pitch_grid_file.save(outdir + "/raw_pitch_grid_output.png")
+			cv2.imwrite(outdir + "/grid_output.png",grid.astype('uint8'))
+			cv2.imwrite(outdir + "/pitch_grid_output.png",pitch_grid.astype('uint8'))
 		if (save_thumb):
-			thumbnail.save(outdir + "/thumbnail.png")
-	#fourcc = cv2.VideoWriter_fourcc(*'DIVX')
-	#video = cv2.VideoWriter("demo.avi",-1,2.3,(grid_res_x,grid_res_y))
-	'''
-	for i in range(grid_res_x):
-		copy_grid = rgb_grid
-		for j in range(len(grid[i])):
-			copy_grid[i*len(grid[i])+j] = (0,0,255)
-		copy_grid_image = Image.new(image.mode,thumbnail.size)
-		copy_grid_image.putdata(copy_grid)
-		video.write(np.array(copy_grid_image))
+			print("Saving thumbnail")
+			cv2.imwrite(outdir + "/thumbnail.png",thumbnail)
 
-	video.release()
-
-	''' 
 	if (save_any and save_midi):
+		print("Saving midi")
 		binfile = open(outdir + "/" + outfile +".mid", 'wb')
 		Midi.writeFile(binfile)
 		binfile.close()
-	
-	#ffmpy export for video 
-	#ff = ffmpy.FFmpeg( inputs = {'demo.avi':None, 'output.wav': None}, outputs={'final.avi':'-y -c:v h264 -c:a ac3'})
-	#ff.run()
 
 	print("Finished")
 
@@ -204,7 +157,18 @@ def toKey(key,absolute_pitch):
 	min_distance_index = distances == min(distances) #indexing 
 	return key_midi_values[min_distance_index][0] #heuristic, if distances are equal, just choose the nearest note
 
-	
+def updateLoadBar(iterator,total):
+	full_percent = total/100
+	bar = "["
+	for i in range(0,100):
+		if iterator >= i * full_percent-1:
+			bar += "#"
+		else: bar += "."
+	bar += "]\r"
+	sys.stdout.write(bar)
+	if (iterator == total-1):
+		sys.stdout.write("\n")
+		
 if __name__ == '__main__':
 	global config
 	global permitted_octave
