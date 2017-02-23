@@ -20,7 +20,7 @@
 # 					 
 import numpy as np
 import scipy.io.wavfile as sio
-import sounddevice as sd
+
 pitch_grid = np.load('output/pitch.grid.npy') #load the pitch grid saved before 
 xres = pitch_grid.shape[1]
 yres = pitch_grid.shape[0]
