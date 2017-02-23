@@ -1,7 +1,11 @@
-Welcome to EdgeMidi v 0.0.1 
+Welcome to EdgeMidi v 0.0.1
 Author: Bradley Baker
 
 Currently in development.
+
+Version History:
+	0.0.1 - Initial Development Version
+
 This tool is going to be part of a larger toolbox including some of my previous work on Image->Audio mappings.  
 
 Feedback and ideas are welcome, but keep in mind, many features are already planned, just still in development.
@@ -35,22 +39,36 @@ Beyond these basic functions, there is the included functionality of mapping ima
 
 
 Features Currently Supported:
-	MIDI mapping and output for Images already Edge-Detected (not robustly tested on many image types)
-	All MAJOR scales
-	Command-Line arguments for adjusting resolution of grid 
-	Pitch-Grid Debugging Outputs
-	Customizeable Config File for adding custom keys, pre-defined notes, etc. 
+	Version 0.0.1:
+		MIDI mapping and output for Images already Edge-Detected
+		All MAJOR scales
+		All MINOR scales
+		GNU-style Command-Line arguments for: 
+			Adjusting resolution of grid
+			Input/Output
+			Turning debugging on/off
+			more 
+		Pitch-Grid Debugging Outputs
+		Customizeable Config File 
 	
+Features in Development:
+	On-the-Fly Pitch-Wav / Midi-Wav conversion using only scipy tools 
+
 Features coming:
 	On-the-Fly Edge Detection 
-	Additional Keys/Scales
-	Dynamic Image Transformation
+	Unit Tests
+	Image-Format Tests
+	More command line arguments:
+		Adjust MIDI Tempo
+		Adjust MIDI Volume
+	Alternative Octave-Grid Wrapping Choices
+	Dynamic Image Transformation : 
 	Auto-Playback
-	Generation of Video including time-marker showing pitch-playback
-	GUI
-	More Scales: 
+	Generation of Video including time-marker showing pitch-playback 
+	GUI 
+	Auto-Dependency Check/Installation
+	More Scales
 		Full Harmonic Scales
-		All minor keys
 		All augmented/diminished keys
 		All modes for major/minor keys
 		Blues scales
@@ -60,8 +78,9 @@ Features coming:
 Usage: 
 	Required Packages:
 		You will need to install the following python libraries prior to usage:
-			numpy	
-			PIL
+			numpy
+			scipy	
+			pillow
 		You are best of doing this by the command line: eg. $python -m pip install numpy 
 
 	The tool is used only via the command line currently. A GUI is on the TODO list.
