@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------
-EdgeMidi, Copyright (c) 2017, Brad Baker 
+Modality Audio, Copyright (c) 2017, Brad Baker 
                        <BBradT) at (gmail . com>
 
 This software is distributed under an Open Source license, the
