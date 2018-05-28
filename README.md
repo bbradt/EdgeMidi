@@ -1,4 +1,6 @@
-# Welcome to ModalityAudio v 0.0.3
+# ModalityAudio v 0.0.3
+**__Creating Art Between Modalities__**
+
 **Author: Bradley Baker**
 
 *Currently in development.*
@@ -62,6 +64,7 @@ Queries are currently made naively, line by line.
 The library outputs a generated image created by combining the queried images.
 
 For example, we take the text of "Ten Maps of Sardonic Wit" by Christian Bok:
+
     Ten Maps of Sardonic Wit
 
     atoms in space now drift
@@ -80,12 +83,15 @@ For example, we take the text of "Ten Maps of Sardonic Wit" by Christian Bok:
     manic words spit on fate
 
 and output the following image:
+
 ![alt text](https://raw.githubusercontent.com/bbradt/ModalityAudio/master/output/example/example.png)
 
 ## Features
 
 Version 0.0.3:
+
     EdgeMidi
+
 		MIDI mapping and output for Images already Edge-Detected
 		All MAJOR scales
 		All MINOR scales
@@ -96,18 +102,24 @@ Version 0.0.3:
 			more 
 		Pitch-Grid Debugging Outputs
 		Customizeable Config File
+
 	Spectro
-    	Squashed Spectrogram Analysis with Quantization (upcoming commit)
-    	ImgEncode functionality
+
+    	Squashed Spectrogram Analysis with Quantization
+    	Additional ImgEncode functionality
     		based on [alexodan's img-encode library](https://github.com/alexadam/img-encode)
+
     TextKeywordImage
+
         Generate an Image based on text
 
 Features coming:
+
    GUI
 	Unit Tests
 	Image-Format Tests
 	Edgemidi
+	
     	More command line arguments:
     		Adjust MIDI Tempo
     		Adjust MIDI Volume
@@ -116,7 +128,9 @@ Features coming:
     	Auto-Playback
     	Generation of Video including time-marker showing pitch-playback 
     	Auto-Dependency Check/Installation
+
 	More Scales
+
 		Full Harmonic Scales
 		All augmented/diminished keys
 		All modes for major/minor keys
