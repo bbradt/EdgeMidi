@@ -4,7 +4,20 @@ import cv2
 import progressbar
 import wave, sys, getopt, array
 import numpy as np
-acceptable = np.array([261.63, 293.66, 329.99, 349.32, 392.00, 440.00, 493.88, 523.25])
+from Scale import Scale
+from multiprocessing import Process, Queue
+quant_scale = Scale()
+def do_y(q, data_x, sampleRate, height, C, x):
+            rez = 0
+            for y in range(height):
+                volume = np.sum(data_x[y])*100/765
+                if volume == 0:
+                    continue        
+                freq = C * (height - y + 1)
+                freq = quant_scale.transpose(freq)
+                rez += np.int(volume * np.sin(freq * np.pi * 2 * x /sampleRate)) 
+            q.put(rez)
+
 def start(inputfile, outputfile, duration):
     print(inputfile)
     rgb_im = cv2.imread(inputfile)
@@ -25,23 +38,36 @@ def start(inputfile, outputfile, duration):
     
     C = 20000 / height
     print('Encoding...')
-    with progressbar.ProgressBar(max_value=numSamples) as bar:
+    max_procs = 20
+    xhit = []
+    for pr in range(int(np.ceil(numSamples/max_procs))):
+        queues = []
+        procs = []
+        i = 0
         for x in range(numSamples):
-            rez = 0
+            if x in xhit:
+                continue
             pixel_x = int(x / samplesPerPixel)
             if pixel_x >= width:
                 pixel_x = width -1
-            for y in range(height):
-                volume = np.sum(rgb_im[pixel_x, y])*100/765
-                if volume == 0:
-                    continue        
-                freq = C * (height - y + 1)
-                rez += np.int(volume * np.sin(freq * np.pi * 2 * x /sampleRate)) 
-            tmpData.append(rez)
+            data_x = rgb_im[pixel_x,:]
+            q = Queue()
+            queues.append(q)
+            p = Process(target=do_y, args=(queues[i], data_x, sampleRate, height, C, x))
+            i+=1
+            p.start()
+            procs.append(p)
+            if len(procs) > max_procs:
+                break
+            xhit.append(x)
+
+        for p, q in zip(procs, queues):
+            rez = q.get()
+            p.join()
+            tmpData.append(rez)           
             if abs(rez) > maxFreq:
                 maxFreq = abs(rez)
-            bar.update(x)
-    
+        print("Done with sample %d/%d" % (x,numSamples))
     for i in range(len(tmpData)):
         data.append(int(32767 * tmpData[i] / maxFreq))
     print('Writing...')
