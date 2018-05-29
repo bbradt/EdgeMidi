@@ -149,9 +149,7 @@ def toKey(key,absolute_pitch):
     global notes_per_octave
     global octave_buffer
     #first, get the notes in the key
-    scale = Scale.Scale(scale=key)
     key_notes = config.get("keys",key).split() 
-    print(key_notes)
     key_midi_values = np.asarray([None]*len(key_notes))
     octave = (absolute_pitch/(notes_per_octave-1))%(permitted_octave) + octave_buffer#restrict by the allowed octave limit
     for i in range(len(key_notes)):

@@ -22,7 +22,7 @@ from pip.req import parse_requirements
 # Package meta-data.
 NAME = 'ModalArt'
 DESCRIPTION = 'Art through modality'
-URL = 'https://github.com/bbradt/ModalityAudio'
+URL = 'https://github.com/bbradt/ModalArt'
 EMAIL = 'bbradt@gmail.com'
 AUTHOR = 'bbradt'
 REQUIRES_PYTHON = '>=2.7.0'

@@ -1,5 +1,5 @@
-# ModalityAudio v 0.0.3
-**__Creating Art Between Modalities__**
+# ModalArt v 0.0.3
+**Art Between Modalities**
 
 **Author: Bradley Baker**
 
@@ -15,16 +15,15 @@
 
 ## Description
 
-This tool is going to be part of a larger toolbox including some of my previous work on Image->Audio mappings.  
+This package strives to foster the creation of art by conversion
+of data modalities, facilitating new perspectives on the art-creation
+process and the art-encounter via technology.
 
-Feedback and ideas are welcome, but keep in mind, many features are already planned, just still in development.
+Current functionality targets conversion between RGB images, audio, and text;
+however, conversion between other kinds of data and art modalities will
+be explored in the future.
 
-The aim of this simple Python module is to create a program which uses Edge-Detection to generate Midi-Tracks 
-which can be inserted into any Midi-Player, or played on the system. 
-
-The idea is to move away from Image-to-Music kits which use RGB values of pixels as input and to instead incorporate 
-spatial information about images to generate music. One intuitive way to do this is to use edge information which maps to 
-values on a virtual keyboard. 
+Feedback is appreciated. 
 
 ### EdgeMidi
 
@@ -85,6 +84,13 @@ For example, we take the text of "Ten Maps of Sardonic Wit" by Christian Bok:
 and output the following image:
 
 ![alt text](https://raw.githubusercontent.com/bbradt/ModalityAudio/master/output/example/example.png)
+
+## Support
+
+I am looking for active co-developers. 
+Contact me at bbradt.com if you would like to contribute.
+
+
 
 ## Features
 
