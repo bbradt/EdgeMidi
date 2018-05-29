@@ -131,7 +131,7 @@ if __name__ == '__main__':
     global img_ctype
     global img_groups
     config = configparser.ConfigParser()
-    config.readfp(open("EdgeMidi.cfg"))
+    config.readfp(open("config.cfg"))
 
     #Read Default values from config file prior to argument parsing
     inputfile = config.get("io","default_tki_infile")

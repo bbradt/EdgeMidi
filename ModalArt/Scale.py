@@ -21,8 +21,8 @@ DEF_SCALE = 'major'
 
 FLAT_CHAR = '♭'
 SHARP_CHAR = '♯'
-SCALE_FILE = 'scales.csv'
-KEY_FILE = 'keys.csv'
+SCALE_FILE = 'data/scales.csv'
+KEY_FILE = 'data/keys.csv'
 
 SCALES = pd.read_csv(SCALE_FILE, encoding='utf-8')
 KEYS = pd.read_csv(KEY_FILE, encoding='utf-8')

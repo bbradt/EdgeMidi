@@ -116,7 +116,7 @@ if __name__ == "__main__":
     global fmin
     global sample_rate
     config = configparser.ConfigParser()
-    config.readfp(open("EdgeMidi.cfg"))
+    config.readfp(open("config.cfg"))
     
     inputfile = config.get("io","default_spc_infile")
     outfile = config.get("io","default_spc_outfile")

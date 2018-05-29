@@ -190,7 +190,7 @@ if __name__ == '__main__':
     global save_thumb
     global input_key
     config = configparser.ConfigParser()
-    config.readfp(open("EdgeMidi.cfg"))
+    config.readfp(open("config.cfg"))
 
     #Read Default values from config file prior to argument parsing
     permitted_octave = config.getint("midi","permitted_octaves")
