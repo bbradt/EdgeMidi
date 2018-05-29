@@ -83,7 +83,7 @@ For example, we take the text of "Ten Maps of Sardonic Wit" by Christian Bok:
 
 and output the following image:
 
-![alt text](https://raw.githubusercontent.com/bbradt/ModalityAudio/master/output/example/example.png)
+![alt text](https://raw.githubusercontent.com/bbradt/ModalArt/master/ModalArt/output/example/example.png)
 
 ## Support
 
